@@ -1,5 +1,13 @@
 # SistemProgramlama
 Sistem Programlama Proje Ödevi
 
-commit test
-commit test ogi
+
+# Ekip Üyeleri
+
+Sedanur Sarıkoç 
+
+Merve Sarı
+
+Kübra Yılmaz
+
+Oğuzhan Yanık
