@@ -1,6 +1,6 @@
 
 INCLUDE = -I ./include
-LIBDIR = ./obj
+LIBDIR = ./libfdr
 CC = gcc
 LIBS = $(LIBDIR)/libfdr.a
 CFLAGS = -g $(INCLUDE)
@@ -11,7 +11,7 @@ all: $(ALL)
 clean:
 	rm -f *.o core $(ALL)
 
-odev: 
-	$(CC) $(CFLAGS) -o program.o ./src/main.c $(LIBS)
+odev:
+	$(CC) $(INCLUDE) -o program.o ./src/main.c $(LIBS)
 
 

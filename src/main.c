@@ -6,6 +6,8 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <dirent.h>
+#include "jrb.h"
+#include "jval.h"
 
 
 typedef struct {
@@ -26,6 +28,9 @@ typedef struct {
   char  key[500][500];
 } kilit;
 
+JRB b;
+JRB bn;
+
 
 void girisDosyasiniOku(giris* dizi){
 	int i=0;
@@ -34,10 +39,9 @@ void girisDosyasiniOku(giris* dizi){
 	char junk[100];
 	int kelimeSayisi = 0;
 
-	FILE *in_file = fopen("input.txt", "r");
+	FILE *in_file = fopen("/home/alpagu/Desktop/SistemProgramlama/input.txt", "r");
 
-	FILE *file = fopen("input.txt", "r");
-	if(!file) {
+	if(!in_file) {
 	    printf("Could not open file. Exiting application. Bye");
 
 	}
@@ -54,24 +58,21 @@ void girisDosyasiniOku(giris* dizi){
 	}
 	dizi->kelimeSayisi = i;
 	i=0;
-
-
 	
 }
 
-sifreliDosyayiOku(){
+/*sifreliDosyayiOku(){
 	
-}
+}*/
 
-kilitDosyasiniOKu(kilit* dizi){
+int kilitDosyasiniOKu(kilit* dizi){
 	int sayac = 0;
 	dizi->sayacKelime = 0;
 	dizi->sayacKey = 0;
 
+	char line[100];
 
-	FILE *in_file = fopen("input.txt", "r");
-
-	FILE *file = fopen(".kilit", "r");
+	FILE *file = fopen("/home/alpagu/Desktop/SistemProgramlama/.kilit", "r");
 	if(!file) {
 	    printf("Could not open file. Exiting application. Bye");
 
@@ -100,17 +101,29 @@ kilitDosyasiniOKu(kilit* dizi){
 
 }
 
-encrypt(){
+void JRB_agaca_ata(kilit* dizi){
+	b = make_jrb();
+
+	for(int j =0; j < dizi->kelimeSayisi/2; j++ ){
+		(void) jrb_insert_str(b, strdup(dizi->key[j]),new_jval_v(NULL));
+	}
+
+	jrb_traverse(bn, b) {
+	printf("%s", bn->key.s);
+	}
+}
+
+/*encrypt(){
 
 }
 
 decrypt(){
 
-}
+}*/
 
 
 int main(int argc, char **argv){
-	if (argc != 4) { fprintf(stderr, "usage: printwords filename\n"); exit(1); }
+	/*if (argc != 4) { fprintf(stderr, "usage: printwords filename\n"); exit(1); }
 	if (argv[1] == "-e"){
 
 		giris* dizi;
@@ -123,10 +136,19 @@ int main(int argc, char **argv){
 		kilitDosyasiniOKu(dizi2);
 	}
 	else if (argv[1] == "-d"){
-		sifreliDosyayiOku();
-		kilitDosyasiniOKu();
+		//sifreliDosyayiOku();
+		//kilitDosyasiniOKu();
 	}
-	else { fprintf(stderr, "Hatali parametre\n"); exit(1); }
+	else { fprintf(stderr, "Hatali parametre\n"); exit(1); }*/
+
+		giris* dizi;
+		dizi = (giris *)malloc(sizeof(giris));
+		girisDosyasiniOku(dizi);
+
+		kilit* dizi2;
+		dizi2 = (kilit *)malloc(sizeof(kilit));
+		kilitDosyasiniOKu(dizi2);
+		JRB_agaca_ata(dizi2);
 }
 
 
