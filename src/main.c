@@ -12,7 +12,7 @@
 
 typedef struct {
   int kelimeSayisi;
-  char kelime[100][100];
+  char kelime[500][500];
 } giris;
 
 typedef struct {
@@ -39,7 +39,7 @@ void girisDosyasiniOku(giris* dizi){
 	char junk[100];
 	int kelimeSayisi = 0;
 
-	FILE *in_file = fopen("/home/alpagu/Desktop/SistemProgramlama/input.txt", "r");
+	FILE *in_file = fopen("/home/alpagu/Desktop/son/input.txt", "r");
 
 	if(!in_file) {
 	    printf("Could not open file. Exiting application. Bye");
@@ -72,7 +72,7 @@ int kilitDosyasiniOKu(kilit* dizi){
 
 	char line[100];
 
-	FILE *file = fopen("/home/alpagu/Desktop/SistemProgramlama/.kilit", "r");
+	FILE *file = fopen("/home/alpagu/Desktop/son/.kilit", "r");
 	if(!file) {
 	    printf("Could not open file. Exiting application. Bye");
 
@@ -105,19 +105,49 @@ void JRB_agaca_ata(kilit* dizi){
 	b = make_jrb();
 
 	for(int j =0; j < dizi->kelimeSayisi/2; j++ ){
-		(void) jrb_insert_str(b, strdup(dizi->key[j]),new_jval_v(NULL));
+		jrb_insert_str(b, dizi->kelime[j],new_jval_v((void *)dizi));
 	}
 
+	
+}
+
+
+void encrypt(giris* dizi_giris, kilit* dizi_kilit){
+
+	FILE *file_encrypt;
+	file_encrypt = fopen("encrypted", "w");
+	if(file_encrypt == NULL) {
+		printf("file can't be opened\n");
+		exit(1);
+    	}	
 	jrb_traverse(bn, b) {
-	printf("%s", bn->key.s);
+		dizi_kilit = (kilit *) bn->val.v;
 	}
+		for(int i =0; i < dizi_giris->kelimeSayisi; i++){
+			for(int j =0; j < dizi_kilit->kelimeSayisi/2; j++ ){
+				if(!strcmp(dizi_giris->kelime[i], dizi_kilit->kelime[j])){
+					fprintf(file_encrypt, "%s ",dizi_kilit->key[j]);
+					j = (dizi_kilit->kelimeSayisi/2);
+				}
+				else if(j == (dizi_kilit->kelimeSayisi/2) - 1){
+					fprintf(file_encrypt, "%s ",dizi_giris->kelime[i]);
+					j = (dizi_kilit->kelimeSayisi/2);
+				}
+				else{
+					printf("file can't be opened\n");
+					exit(1);
+				}
+			}
+		}
+
+	
+	
+
+	fclose(file_encrypt);
+
 }
 
-/*encrypt(){
-
-}
-
-decrypt(){
+/*decrypt(){
 
 }*/
 
@@ -149,6 +179,8 @@ int main(int argc, char **argv){
 		dizi2 = (kilit *)malloc(sizeof(kilit));
 		kilitDosyasiniOKu(dizi2);
 		JRB_agaca_ata(dizi2);
+
+		encrypt(dizi, dizi2);
 }
 
 
