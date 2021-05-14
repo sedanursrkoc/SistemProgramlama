@@ -1,87 +1,47 @@
-#include <stdio.h>
-
-#include <string.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/wait.h>
-#include <sys/types.h>
-#include <dirent.h>
-#include "jrb.h"
-#include "jval.h"
-
-
-typedef struct {
-  int kelimeSayisi;
-  char kelime[500][500];
-} giris;
-
-typedef struct {
-  char *kelime;
-  char *kod;
-} sifreliMetin;
-
-typedef struct {
-  int kelimeSayisi;
-  int sayacKelime;
-  int sayacKey;
-  char kelime[500][500];
-  char  key[500][500];
-} kilit;
-
-JRB b;
-JRB bn;
+#include "main.h"
 
 
 void girisDosyasiniOku(giris* dizi, char * dosya_adi){
-	int i=0;
-
-	char line[100];
-	char junk[100];
-	int kelimeSayisi = 0;
 
 	FILE *in_file = fopen(dosya_adi, "r");
 
 	if(!in_file) {
-	    printf("Could not open file. Exiting application. Bye");
+	    printf("%s: %s", dosya_adi,"Could not open file. Exiting application. Bye\n"); exit(1);
 
 	}
-	while(fscanf(in_file, "%s", line) != EOF) {
-	    fscanf(in_file,"%[^ \n\t\r]s",line); //Get text
+	while(fscanf(in_file, "%s", dizi->line) != EOF) {
+	    fscanf(in_file,"%[^ \n\t\r]s",dizi->line); //Get text
 
 
-	strcpy(dizi->kelime[i], line);
+	strcpy(dizi->kelime[dizi->kelimeSayisi], dizi->line);
 
 
-	i++;
+	dizi->kelimeSayisi++;
 
-	    fscanf(in_file,"%[ \n\t\r]",junk); //Remove any 'white space' characters
 	}
-	dizi->kelimeSayisi = i;
-	i=0;
 	
 }
 
-int kilitDosyasiniOKu(kilit* dizi){
+void kilitDosyasiniOKu(kilit* dizi){
 	int sayac = 0;
 	dizi->sayacKelime = 0;
 	dizi->sayacKey = 0;
-
-	char line[100];
+	
 
 	FILE *file = fopen(".kilit", "r");
 	if(!file) {
-	    printf("Could not open file. Exiting application. Bye");
+	    printf(".kilit: Could not open file. Exiting application. Bye\n");
 
 	}
-	while(fscanf(file, "%s", line) != EOF) {
-	    fscanf(file,"%[^ \n\t\r]s",line); //Get text
-	    char * token = strtok(line, "\"");
+	while(fscanf(file, "%s", dizi->line) != EOF) {
+	    fscanf(file,"%[^ \n\t\r]s",dizi->line); //Get text
+	    char * token = strtok(dizi->line, "\"");
 	 
-            if(sayac % 2 == 0 && (!strstr(line, "{") && !strstr(line, "}"))){
+            if(sayac % 2 == 0 && (!strstr(dizi->line, "{") && !strstr(dizi->line, "}"))){
 		strcpy(dizi->key[dizi->sayacKey], token); 
 		dizi->sayacKey = dizi->sayacKey + 1;
 	    }
-	    else if(!strstr(line, "{") && !strstr(line, "}")){
+	    else if(!strstr(dizi->line, "{") && !strstr(dizi->line, "}")){
 		strcpy(dizi->kelime[dizi->sayacKelime], token); 
 		dizi->sayacKelime = dizi->sayacKelime + 1;
 	    }
@@ -92,8 +52,6 @@ int kilitDosyasiniOKu(kilit* dizi){
 	sayac = sayac + 1;
 	    
 	}
-
-	return 1;
 
 }
 
@@ -110,7 +68,7 @@ void encrypt(giris* dizi_giris, kilit* dizi_kilit, char * dosya_adi_cikis){
 	}
 
 	if(file_encrypt == NULL) {
-		printf("file can't be opened\n");
+		printf("%s: %s", dosya_adi_cikis,"Could not open file. Exiting application. Bye\n");
 		exit(1);
     	}	
 	jrb_traverse(bn, b) {
@@ -140,9 +98,8 @@ void encrypt(giris* dizi_giris, kilit* dizi_kilit, char * dosya_adi_cikis){
 
 void decrypt(giris* dizi_giris, kilit* dizi_kilit, char * dosya_adi_giris, char * dosya_adi_cikis){
 	
-
-
 	char line[100];
+
 	FILE *file_decrypt;
 	file_decrypt = fopen(dosya_adi_cikis, "w");
 
@@ -153,9 +110,10 @@ void decrypt(giris* dizi_giris, kilit* dizi_kilit, char * dosya_adi_giris, char 
 	}
 
 	if(file_decrypt == NULL) {
-		printf("file can't be opened\n");
+		printf("%s: %s", dosya_adi_cikis,"Could not open file. Exiting application. Bye\n");
 		exit(1);
     	}	
+
 	jrb_traverse(bn, b) {
 		dizi_kilit = (kilit *) bn->val.v;
 		
@@ -164,7 +122,7 @@ void decrypt(giris* dizi_giris, kilit* dizi_kilit, char * dosya_adi_giris, char 
 	FILE *in_file = fopen(dosya_adi_giris, "r");
 
 	if(!in_file) {
-	    printf("Could not open file. Exiting application. Bye");
+	    printf("%s: %s", dosya_adi_cikis,"Could not open file. Exiting application. Bye\n");
 
 	}
 	while(fscanf(in_file, "%s", line) != EOF) {
@@ -198,7 +156,8 @@ int main(int argc, char **argv){
 	kilit* dizi2;
 	dizi2 = (kilit *)malloc(sizeof(kilit));
 
-	if (argc != 4) { fprintf(stderr, "usage: printwords filename\n"); exit(1); }
+	if (argc == 2 && (!strcmp(argv[1],"-h"))) { fprintf(stderr, "Base54 1.0 (https://base54.com)\nUsage: ./kripto [OPTIONS] [file_name] [file_name]\nENCRYPT:\n\t./kripto -e input_file output_file\nDECRYPT:\n\t./kripto -e input_file output_file\n"); exit(1); }
+	if (argc != 4) { fprintf(stderr, "usage: 4 arguments required. Exiting application. For more information: ./kripto -h\n"); exit(1); }
 	if (!strcmp(argv[1],"-e")){	
 		girisDosyasiniOku(dizi, argv[2]);
 		kilitDosyasiniOKu(dizi2);
@@ -209,23 +168,13 @@ int main(int argc, char **argv){
 		kilitDosyasiniOKu(dizi2);
 		decrypt(dizi, dizi2, argv[2], argv[3]);
 	}
-	else { fprintf(stderr, "Hatali parametre\n"); exit(1); }
+	else { fprintf(stderr, "usage: 4 arguments required. Exiting application. For more information: ./kripto -h\n"); exit(1); }
 
-		
-		
-		
+	free(dizi);
+	free(dizi2);
+
+				
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
