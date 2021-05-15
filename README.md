@@ -1,7 +1,7 @@
 # BASE54
 Base54 kripto programı derleme ve kullanımı 
 
-![base54-help](https://user-images.githubusercontent.com/59048321/118356952-43087080-b580-11eb-9637-48f5f07b2eb2.png)
+![base54-help](https://i.ibb.co/xM9py6K/base54-h.png)
 
 ## Ekip Üyeleri
 
