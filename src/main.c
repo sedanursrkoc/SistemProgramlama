@@ -156,7 +156,16 @@ int main(int argc, char **argv){
 	kilit* dizi2;
 	dizi2 = (kilit *)malloc(sizeof(kilit));
 
-	if (argc == 2 && (!strcmp(argv[1],"-h"))) { fprintf(stderr, "Base54 1.0 (https://base54.com)\nUsage: ./kripto [OPTIONS] [file_name] [file_name]\nENCRYPT:\n\t./kripto -e input_file output_file\nDECRYPT:\n\t./kripto -e input_file output_file\n"); exit(1); }
+	if (argc == 2 && (!strcmp(argv[1],"-h"))) { printf("\n");
+ printf(R"EOF(
+   ██████╗░░█████╗░░██████╗███████╗███████╗░░██╗██╗
+   ██╔══██╗██╔══██╗██╔════╝██╔════╝██╔════╝░██╔╝██║
+   ██████╦╝███████║╚█████╗░█████╗░░██████╗░██╔╝░██║
+   ██╔══██╗██╔══██║░╚═══██╗██╔══╝░░╚════██╗███████║
+   ██████╦╝██║░░██║██████╔╝███████╗██████╔╝╚════██║
+   ╚═════╝░╚═╝░░╚═╝╚═════╝░╚══════╝╚═════╝░░░░░░╚═╝
+)EOF");
+fprintf(stderr, "\n Base54 1.0 (https://Base54.com)\n\n Usage: ./kripto [OPTIONS] [file_name] [file_name]\n\n   ENCRYPT:\n\t   ./kripto -e input_file output_file\n   DECRYPT:\n\t   ./kripto -d input_file output_file\n\n"); exit(1); }
 	if (argc != 4) { fprintf(stderr, "usage: 4 arguments required. Exiting application. For more information: ./kripto -h\n"); exit(1); }
 	if (!strcmp(argv[1],"-e")){	
 		girisDosyasiniOku(dizi, argv[2]);
